@@ -27,3 +27,10 @@ export interface Layer {
   name: string;
   isLoading: boolean;
 }
+
+export interface Preset {
+  id: string;
+  name: string;
+  timestamp: number;
+  layers: Layer[];
+}

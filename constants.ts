@@ -20,6 +20,6 @@ export const BLEND_MODES: { value: BlendMode; label: string }[] = [
   { value: BlendMode.LUMINOSITY, label: 'Luminosity' },
 ];
 
-export const INITIAL_LAYERS_COUNT = 10;
+export const INITIAL_LAYERS_COUNT = 4;
 export const IMAGE_WIDTH = 1200;
 export const IMAGE_HEIGHT = 1600; // Portrait orientation
