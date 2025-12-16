@@ -18,3 +18,8 @@ View your app in AI Studio: https://ai.studio/apps/drive/1XAfyPGvRg7Wc86BysKDbql
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Deploy to GitHub Pages
+
+1. Update the repository name in [`vite.config.ts`](./vite.config.ts) if you fork under a different project name.
+2. Push changes to the `main` branch; the included **Deploy to GitHub Pages** workflow builds the site and publishes it to GitHub Pages with an SPA-friendly `404.html` fallback.
