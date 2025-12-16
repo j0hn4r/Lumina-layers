@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Layer, BlendMode } from '../types';
 
 interface CanvasProps {
@@ -6,11 +6,18 @@ interface CanvasProps {
 }
 
 export const Canvas: React.FC<CanvasProps> = ({ layers }) => {
-  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  // Track which URL has been fully loaded for each layer id
+  const [loadedImages, setLoadedImages] = useState<Record<string, string>>({});
 
-  const handleImageLoad = (id: string) => {
-    setLoadedImages(prev => ({ ...prev, [id]: true }));
+  const handleImageLoad = (id: string, url: string) => {
+    setLoadedImages(prev => ({ ...prev, [id]: url }));
   };
+
+  const visibleLayers = useMemo(() => layers.filter(layer => layer.isVisible), [layers]);
+  const allVisibleImagesLoaded = useMemo(
+    () => visibleLayers.every(layer => loadedImages[layer.id] === layer.url),
+    [loadedImages, visibleLayers]
+  );
 
   return (
     <div className="relative w-full h-full flex items-center justify-center p-8 bg-[#0b0f19] overflow-hidden">
@@ -22,9 +29,11 @@ export const Canvas: React.FC<CanvasProps> = ({ layers }) => {
         }}
       >
         {/* Placeholder/Empty State */}
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-900 text-slate-600">
+        {!allVisibleImagesLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-900 text-slate-600">
             <span className="text-sm">Loading visual assets...</span>
-        </div>
+          </div>
+        )}
 
         {layers.map((layer, index) => (
           <div
@@ -40,7 +49,7 @@ export const Canvas: React.FC<CanvasProps> = ({ layers }) => {
             }}
           >
             {/* Loading Indicator for individual layer */}
-            {!loadedImages[layer.id] && layer.isVisible && (
+            {loadedImages[layer.id] !== layer.url && layer.isVisible && (
               <div className="absolute inset-0 flex items-center justify-center bg-slate-800/50 backdrop-blur-sm z-10">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white opacity-20"></div>
               </div>
@@ -50,7 +59,7 @@ export const Canvas: React.FC<CanvasProps> = ({ layers }) => {
               src={layer.url}
               alt={`Layer ${index + 1}`}
               className="w-full h-full object-cover"
-              onLoad={() => handleImageLoad(layer.id)}
+              onLoad={() => handleImageLoad(layer.id, layer.url)}
               crossOrigin="anonymous"
             />
           </div>
